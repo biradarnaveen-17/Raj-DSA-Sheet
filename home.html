@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home • Raj’s DSA Sheet</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+  <div class="container">
+    <aside class="sidebar">
+      <div class="brand">R</div>
+
+      <nav class="nav">
+        <a class="active" href="home.html"><div class="ico">🏠</div><div class="lbl">Home</div></a>
+        <a href="sheet.html"><div class="ico">📄</div><div class="lbl">Sheet</div></a>
+        <a href="profile.html"><div class="ico">👤</div><div class="lbl">Profile</div></a>
+        <a href="settings.html"><div class="ico">⚙️</div><div class="lbl">Settings</div></a>
+      </nav>
+
+      <div class="sbBottom">
+        <div class="avatar" id="avatar">👤</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="h1">Categories</h1>
+          <p class="sub">Welcome to Raj’s DSA Sheet. Open the sheet and start ticking solved problems.</p>
+        </div>
+
+        <div class="seg">
+          <span class="pill" id="who">Checking session...</span>
+          <button class="btn ghost" id="logout">Logout</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="cardHead">
+            <h2>DSA Sheets</h2>
+            <span class="badge">Raj’s DSA Sheet</span>
+          </div>
+          <div class="cardBody">
+            <div style="display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:14px">
+              <div class="card" style="border-radius:22px">
+                <div class="cardBody">
+                  <div style="font-weight:900; font-size:15px">Raj’s DSA Sheet</div>
+                  <div class="sub" style="margin-top:6px">50 handpicked problems (Easy/Medium)</div>
+                  <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap">
+                    <a class="btn primary" href="sheet.html">Open Sheet</a>
+                    <a class="btn ghost" href="profile.html">My Profile</a>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card" style="border-radius:22px; opacity:.65">
+                <div class="cardBody">
+                  <div style="font-weight:900; font-size:15px">Coming Soon</div>
+                  <div class="sub" style="margin-top:6px">More sheets can be added later.</div>
+                  <div style="display:flex; gap:10px; margin-top:12px; flex-wrap:wrap">
+                    <button class="btn ghost" disabled>Sheet</button>
+                    <button class="btn ghost" disabled>Track</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHead">
+            <h2>Quick Actions</h2>
+            <span class="badge">Progress</span>
+          </div>
+          <div class="cardBody">
+            <div class="progressWrap">
+              <div class="sub">Open the sheet and start ticking solved problems.</div>
+              <a class="btn primary" href="sheet.html">Continue to Sheet</a>
+              <a class="btn ghost" href="settings.html">Settings</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { requireAuth, signOut, qs } from "./auth.js";
+    import { supabase } from "./supabase.js";
+
+    const session = await requireAuth();
+    if(!session) {}
+
+    qs("who").textContent = "Logged in: " + session.user.email;
+
+    // show name if available
+    const { data } = await supabase.from("profiles").select("name").eq("id", session.user.id).maybeSingle();
+    if(data?.name){
+      qs("avatar").textContent = data.name.trim().slice(0,1).toUpperCase();
+    }
+
+    qs("logout").addEventListener("click", signOut);
+  </script>
+
+</body>
+</html>

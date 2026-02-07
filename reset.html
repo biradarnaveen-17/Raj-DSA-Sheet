@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reset Password • Raj’s DSA Sheet</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    body{display:grid; place-items:center; padding:18px;}
+    .box{width:min(520px, 100%); padding:22px}
+    label{font-size:12px; color:var(--muted)}
+    input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+      margin-top:6px;
+    }
+    .msg{
+      display:none;
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card box">
+    <h1 class="h1">Reset password</h1>
+    <p class="sub">Enter a new password. After update, login again.</p>
+
+    <div style="margin-top:12px">
+      <label>New Password</label>
+      <input id="p1" type="password" placeholder="Min 6 characters" />
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Confirm Password</label>
+      <input id="p2" type="password" placeholder="Re-enter password" />
+    </div>
+
+    <button class="btn primary" id="updateBtn" style="width:100%; margin-top:14px">
+      Update password
+    </button>
+
+    <div id="msg" class="msg"></div>
+
+    <p class="sub" style="margin-top:12px">
+      Go back: <a href="login.html" style="color:var(--accent)">Login</a>
+    </p>
+  </div>
+
+  <script type="module">
+    import { supabase } from "./supabase.js";
+
+    const p1 = document.getElementById("p1");
+    const p2 = document.getElementById("p2");
+    const msgEl = document.getElementById("msg");
+
+    function showMsg(text, type=""){
+      msgEl.style.display = "block";
+      msgEl.style.borderColor = "var(--line)";
+      msgEl.style.color = "var(--muted)";
+      msgEl.textContent = text;
+
+      if(type === "ok"){
+        msgEl.style.borderColor = "rgba(102,227,180,.25)";
+        msgEl.style.color = "var(--ok)";
+      }
+      if(type === "bad"){
+        msgEl.style.borderColor = "rgba(255,107,107,.25)";
+        msgEl.style.color = "#ff6b6b";
+      }
+    }
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if(!session){
+      showMsg("Reset session not found. Please open the reset link from your email again.", "bad");
+    }
+
+    document.getElementById("updateBtn").addEventListener("click", async () => {
+      const a = p1.value;
+      const b = p2.value;
+
+      if(a.length < 6) return showMsg("Password must be at least 6 characters.", "bad");
+      if(a !== b) return showMsg("Passwords do not match.", "bad");
+
+      showMsg("Updating password...", "");
+
+      const { error } = await supabase.auth.updateUser({ password: a });
+      if(error) return showMsg(error.message, "bad");
+
+      showMsg("Password updated successfully! Redirecting to login...", "ok");
+      setTimeout(()=> window.location.href = "login.html", 900);
+    });
+  </script>
+
+</body>
+</html>

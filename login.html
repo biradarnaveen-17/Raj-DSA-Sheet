@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login • Raj’s DSA Sheet</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    body{
+      display:grid;
+      place-items:center;
+      padding:18px;
+    }
+    .authWrap{
+      width:min(980px, 100%);
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+      align-items:stretch;
+    }
+    .authLeft{padding:26px}
+    .authRight{padding:22px}
+    @media (max-width: 900px){
+      .authWrap{grid-template-columns:1fr}
+    }
+    .titleRow{display:flex; align-items:center; gap:12px}
+    .logoBig{
+      width:52px;height:52px;
+      border-radius:20px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      display:grid;place-items:center;
+      box-shadow: var(--shadow);
+      font-weight:900;
+    }
+    .tabs{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px}
+    .tab{padding:10px 12px; border-radius:999px}
+    .tab.active{border-color: rgba(255,138,61,.45); background: rgba(255,138,61,.10)}
+    .form{display:grid; gap:10px; margin-top:8px}
+    label{font-size:12px; color:var(--muted)}
+    input{
+      width:100%;
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+    }
+    .msg{
+      display:none;
+      padding:12px 14px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="authWrap">
+    <div class="card authLeft">
+      <div class="titleRow">
+        <div class="logoBig">R</div>
+        <div>
+          <div style="font-weight:900; font-size:15px">Raj’s DSA Sheet</div>
+          <div style="color:var(--muted); font-size:12px">Track solved • Notes • Revision ⭐</div>
+        </div>
+      </div>
+
+      <h1 class="h1" style="margin-top:16px">Welcome 👋 Let’s get started!</h1>
+      <p class="sub">
+        Login once and track your DSA progress like Striver sheet.
+        Your solved status, notes and revision are saved securely.
+      </p>
+
+      <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap">
+        <span class="pill">✅ Supabase Auth</span>
+        <span class="pill">📩 Email verification</span>
+        <span class="pill">🔁 Long session</span>
+      </div>
+    </div>
+
+    <div class="card authRight">
+      <div class="tabs">
+        <button class="btn tab active" id="loginTab">Login</button>
+        <button class="btn tab" id="signupTab">Create account</button>
+      </div>
+
+      <div class="form">
+        <div id="nameWrap" style="display:none">
+          <label>Full Name</label>
+          <input id="name" placeholder="Raj Kumar" />
+        </div>
+
+        <div>
+          <label>Email</label>
+          <input id="email" placeholder="example@gmail.com" />
+        </div>
+
+        <div>
+          <label>Password</label>
+          <input id="pass" type="password" placeholder="Min 6 characters" />
+        </div>
+
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px">
+          <button class="btn primary" id="mainBtn">Login</button>
+          <button class="btn ghost" id="forgotBtn">Forgot password</button>
+        </div>
+
+        <div id="msg" class="msg"></div>
+
+        <p class="sub" style="margin-top:10px">
+          After login: <a href="home.html" style="color:var(--accent)">Home</a> •
+          <a href="sheet.html" style="color:var(--accent)">Sheet</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { supabase } from "./supabase.js";
+
+    const loginTab = document.getElementById("loginTab");
+    const signupTab = document.getElementById("signupTab");
+    const nameWrap = document.getElementById("nameWrap");
+
+    const nameEl = document.getElementById("name");
+    const emailEl = document.getElementById("email");
+    const passEl = document.getElementById("pass");
+
+    const mainBtn = document.getElementById("mainBtn");
+    const forgotBtn = document.getElementById("forgotBtn");
+    const msgEl = document.getElementById("msg");
+
+    let mode = "login";
+
+    function showMsg(text, type=""){
+      msgEl.style.display = "block";
+      msgEl.style.borderColor = "var(--line)";
+      msgEl.style.color = "var(--muted)";
+      msgEl.textContent = text;
+
+      if(type === "ok"){
+        msgEl.style.borderColor = "rgba(102,227,180,.25)";
+        msgEl.style.color = "var(--ok)";
+      }
+      if(type === "bad"){
+        msgEl.style.borderColor = "rgba(255,107,107,.25)";
+        msgEl.style.color = "#ff6b6b";
+      }
+    }
+
+    function setMode(m){
+      mode = m;
+      const isLogin = mode === "login";
+      loginTab.classList.toggle("active", isLogin);
+      signupTab.classList.toggle("active", !isLogin);
+      nameWrap.style.display = isLogin ? "none" : "block";
+      mainBtn.textContent = isLogin ? "Login" : "Create account";
+    }
+
+    loginTab.addEventListener("click", () => setMode("login"));
+    signupTab.addEventListener("click", () => setMode("signup"));
+
+    // already logged in?
+    const { data: { session } } = await supabase.auth.getSession();
+    if(session){
+      window.location.href = "home.html";
+    }
+
+    mainBtn.addEventListener("click", async () => {
+      const email = emailEl.value.trim();
+      const password = passEl.value;
+
+      if(!email) return showMsg("Enter your email.", "bad");
+      if(password.length < 6) return showMsg("Password must be at least 6 characters.", "bad");
+
+      if(mode === "signup"){
+        const name = nameEl.value.trim();
+        if(!name) return showMsg("Enter your full name.", "bad");
+
+        showMsg("Creating account...", "");
+
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { name } }
+        });
+
+        if(error) return showMsg(error.message, "bad");
+
+        if(data?.user){
+          await supabase.from("profiles").upsert({
+            id: data.user.id,
+            name
+          });
+        }
+
+        showMsg("Account created! Verify your email link, then login.", "ok");
+      } else {
+        showMsg("Logging in...", "");
+
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if(error) return showMsg(error.message, "bad");
+
+        showMsg("Login success! Redirecting...", "ok");
+        setTimeout(()=> window.location.href = "home.html", 500);
+      }
+    });
+
+    forgotBtn.addEventListener("click", async () => {
+      const email = emailEl.value.trim();
+      if(!email) return showMsg("Enter your email first.", "bad");
+
+      showMsg("Sending reset email...", "");
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: "http://127.0.0.1:5500/reset.html"
+      });
+
+      if(error) return showMsg(error.message, "bad");
+
+      showMsg("Reset email sent. Open your email → click link → set new password.", "ok");
+    });
+  </script>
+
+</body>
+</html>

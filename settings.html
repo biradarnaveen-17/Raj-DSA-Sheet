@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings • Raj’s DSA Sheet</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+  <div class="container">
+    <aside class="sidebar">
+      <div class="brand">R</div>
+
+      <nav class="nav">
+        <a href="home.html"><div class="ico">🏠</div><div class="lbl">Home</div></a>
+        <a href="sheet.html"><div class="ico">📄</div><div class="lbl">Sheet</div></a>
+        <a href="profile.html"><div class="ico">👤</div><div class="lbl">Profile</div></a>
+        <a class="active" href="settings.html"><div class="ico">⚙️</div><div class="lbl">Settings</div></a>
+      </nav>
+
+      <div class="sbBottom">
+        <div class="avatar" id="avatar">👤</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 class="h1">Settings</h1>
+          <p class="sub">Account settings and actions.</p>
+        </div>
+
+        <div class="seg">
+          <span class="pill" id="who">Checking session...</span>
+          <button class="btn ghost" id="logout">Logout</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="cardHead">
+            <h2>Account</h2>
+            <span class="badge">Security</span>
+          </div>
+          <div class="cardBody" style="display:grid; gap:10px">
+            <div class="sub">
+              If you want to change password, use Forgot Password from login page.
+            </div>
+
+            <a class="btn" href="login.html">Go to Login</a>
+            <button class="btn danger" id="logout2">Logout</button>
+          </div>
+        </div>
+
+        <div class="card">
+  <div class="cardHead">
+    <h2>About</h2>
+    <span class="badge">Raj’s DSA Sheet</span>
+  </div>
+
+  <div class="cardBody">
+    <div class="sub">
+      Built with HTML, CSS, JavaScript and Supabase.
+      <br><br>
+      Features: Solved tracking, Notes, Revision ⭐, Search, Filters.
+    </div>
+
+    <div style="height:14px"></div>
+
+    <div style="display:grid; gap:10px">
+      <div style="font-weight:900; letter-spacing:.2px">Contact Developer</div>
+
+      <a class="btn" target="_blank" rel="noreferrer"
+         href="https://www.linkedin.com/in/naveen-r-biradar-a389a634a/">
+        🔗 LinkedIn
+      </a>
+
+      <a class="btn" target="_blank" rel="noreferrer"
+         href="https://github.com/biradarnaveen-17">
+        💻 GitHub
+      </a>
+
+      <a class="btn" href="mailto:biradarnaveen17@gmail.com">
+        ✉️ Email
+      </a>
+
+      <a class="btn" target="_blank" rel="noreferrer"
+         href="https://naveenbiradarportfolio.netlify.app/">
+        🌐 Portfolio
+      </a>
+    </div>
+  </div>
+</div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module" src="settings.js"></script>
+</body>
+</html>
